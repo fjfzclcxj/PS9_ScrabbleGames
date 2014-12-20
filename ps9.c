@@ -107,12 +107,64 @@ void  play_hand(char hand[], int handCount[], char word_list[MAX_WORDS][MAX_LENG
     hand: a string
     word_list: list of lowercase strings
 */
+void  play_hand(char hand[], int handCount[], char **word_list)
 {
-/*
-
-	implement code here
+/*  Allows the user to play the given hand, as follows:
+    - The hand is displayed.
+	- The user may input a word.
+	- An invalid word is rejected, and a message is displayed asking the user to choose another word.
+    - When a valid word is entered, it uses up letters from the hand.
+    - After every valid word: the score for that word and the total score so far are displayed, the remaining letters in the hand are displayed, and the user is asked to input another word.
+    - The sum of the word scores is displayed when the hand finishes.
+    - The hand finishes when there are no more unused letters.The user can also finish playing the hand by inputing a single period ('.') instead of a word.
+    -  The final score is displayed.
+    hand: a string
+    word_list: list of lowercase strings
 */
+    char word[HAND_SIZE+1];
+	int score=0,judge=0,t; 
+	while(1)
+	{
+	  
+	  printf("Current Hand: ");
+      display_hand(hand, handCount);
+      printf("\nEnter word, or a . to indicate that you are finished: ");
+      back:
+      scanf("%s",word);
+    
+      if(word[0]=='.')
+	  {
+	    printf("Total score: %d points.\n",score);
+        break;
+      }
+    
+      if(is_valid_word(word, hand, handCount, word_list))
+          {
+              score=score+get_word_score(word, strlen(word));
+			  printf("%s earned %d points. Total: %d points\n",word,get_word_score(word,strlen(word)),score);
+              update_hand(hand, handCount, word);
+           }
+	  else 
+	  {
+		  printf("\nWrong word. Please enter another word:\n");
+		  goto back;
+	  }
+	  for(t=0;t<strlen(hand);t++)
+	  {
+	  	if(handCount[t]!=0)
+	  	{
+	  	  judge=1;           //还有字母 
+		  break;	
+	  	}
+	  }
+	  if(judge==0)
+	  {
+	    printf("Total score: %d points.\n",score);
+        break;
+      }  
+    }
 }
+
 void play_game(char word_list[MAX_WORDS][MAX_LENGTH+1])
 /*  Allow the user to play an arbitrary number of hands.
     - Asks the user to input 'n' or 'r' or 'e'.
